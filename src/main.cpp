@@ -8,6 +8,8 @@
 // for convenience
 using nlohmann::json;
 using std::string;
+const double EPSILON = 0.001;
+const double MAX_THROTTLE = 0.3;
 
 // For converting back and forth between radians and degrees.
 constexpr double pi() { return M_PI; }
@@ -68,7 +70,7 @@ int main() {
            *   Mybe use another PID controller to control the speed!
            */
           pid_steer.UpdateError(cte) ;
-          pid_throttle.UpdateError(1 - abs(cte));
+          pid_throttle.UpdateError(1 / (abs(cte) + EPSILON));
 
           steer_value = pid_steer.TotalError() / speed ;
           throttle_value = abs(pid_throttle.TotalError());
@@ -78,8 +80,8 @@ int main() {
           else if (steer_value < -1){
             steer_value = -1.0 ;
           }
-          if(throttle_value > 1){
-            throttle_value = 1.0 ;
+          if(throttle_value > MAX_THROTTLE){
+            throttle_value = MAX_THROTTLE ;
           }
           // DEBUG
           std::cout << "CTE: " << cte << " Steering Value: " << steer_value 
@@ -89,7 +91,6 @@ int main() {
           msgJson["steering_angle"] = steer_value;
           msgJson["throttle"] = throttle_value;
           auto msg = "42[\"steer\"," + msgJson.dump() + "]";
-          std::cout << msg << std::endl;
           ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
         }  // end "telemetry" if
       } else {
