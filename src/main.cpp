@@ -70,10 +70,10 @@ int main() {
            *   Mybe use another PID controller to control the speed!
            */
           pid_steer.UpdateError(cte) ;
-          pid_throttle.UpdateError(1 / (abs(cte) + EPSILON));
+          pid_throttle.UpdateError(1 /(100 * (cte) + EPSILON));
 
           steer_value = pid_steer.TotalError() / speed ;
-          throttle_value = abs(pid_throttle.TotalError());
+          throttle_value = pid_throttle.TotalError();
           if(steer_value > 1){
             steer_value = 1.0 ;
           }
@@ -82,6 +82,9 @@ int main() {
           }
           if(throttle_value > MAX_THROTTLE){
             throttle_value = MAX_THROTTLE ;
+          }
+          else if (throttle_value < -MAX_THROTTLE){
+            throttle_value = -MAX_THROTTLE;
           }
           // DEBUG
           std::cout << "CTE: " << cte << " Steering Value: " << steer_value 
