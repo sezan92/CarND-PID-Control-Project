@@ -77,11 +77,11 @@ int main() {
           if(steer_value > 1){
             steer_value = 1.0 ;
           }
+          if (steer_value < -1){
+            steer_value = -1.0;
+          }
           if(throttle_value > MAX_THROTTLE){
             throttle_value = MAX_THROTTLE ;
-          }
-          else if (throttle_value < -MAX_THROTTLE){
-            throttle_value = -MAX_THROTTLE;
           }
           // DEBUG
           std::cout << "CTE: " << cte << " Steering Value: " << steer_value 
