@@ -41,7 +41,7 @@ int main() {
    * TODO: Initialize the pid_steer variable.
    */
   pid_steer.Init(-6.00, -0.005, -55);
-  pid_throttle.Init(2.5, 0, 0.5);
+  pid_throttle.Init(10, 0, 0.5);
 
   h.onMessage([&pid_steer, &pid_throttle](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, 
                      uWS::OpCode opCode) {
@@ -73,7 +73,7 @@ int main() {
           pid_throttle.UpdateError(1 /(100 * (cte) + EPSILON));
 
           steer_value = pid_steer.TotalError() / speed ;
-          throttle_value = pid_throttle.TotalError();
+          throttle_value = abs(pid_throttle.TotalError());
           if(steer_value > 1){
             steer_value = 1.0 ;
           }
@@ -92,7 +92,7 @@ int main() {
 
           json msgJson;
           msgJson["steering_angle"] = steer_value;
-          msgJson["throttle"] = MAX_THROTTLE;
+          msgJson["throttle"] = throttle_value;
           auto msg = "42[\"steer\"," + msgJson.dump() + "]";
           ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
         }  // end "telemetry" if
