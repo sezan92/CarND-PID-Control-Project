@@ -9,7 +9,7 @@
 using nlohmann::json;
 using std::string;
 const double EPSILON = 0.001;
-const double MAX_THROTTLE = 0.3;
+const double MAX_THROTTLE = 0.5;
 
 // For converting back and forth between radians and degrees.
 constexpr double pi() { return M_PI; }
@@ -76,9 +76,6 @@ int main() {
           throttle_value = abs(pid_throttle.TotalError());
           if(steer_value > 1){
             steer_value = 1.0 ;
-          }
-          else if (steer_value < -1){
-            steer_value = -1.0 ;
           }
           if(throttle_value > MAX_THROTTLE){
             throttle_value = MAX_THROTTLE ;
